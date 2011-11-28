@@ -1,0 +1,10 @@
+Package: fastukeycor
+Type: Package
+Title: Performs Tukeys biwt correlation... fast! (see biwt).
+Version: 1.0
+Date: 2011-08-26
+Author: David L Gibbs
+Maintainer: David L Gibbs <gibbsd@ohsu.edu>
+Description: Code and ideas modified from biwt package.
+License: GPLv3
+LazyLoad: yes

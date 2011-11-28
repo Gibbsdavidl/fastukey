@@ -1,0 +1,5 @@
+useDynLib(fastukeycor)
+
+export(fastukeycor, biwt.est.2vecs, fastksolve, testfastksolve, partukeycor)
+
+
