@@ -111,7 +111,7 @@ partukeycor <- function
   jobs <- lapply(1:cores, function(idx) {
     parallel(parallelBiWt(x,ijList[[idx]],r,med.init, full.init,
                           median, originalFlavor=og),
-             name=x, mc.set.seed = T)
+             name=idx, mc.set.seed = T)
   })
   corr <- unlist(collect(jobs))
   if(output == "matrix") {
