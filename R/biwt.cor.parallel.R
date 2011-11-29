@@ -4,18 +4,20 @@
 parallelBiWt <- function
 ### parallel tukey estimate call
 (x,        ##<< matrix
- isandjs,  ##<< list of lists with 2 element vectors, i and j!
+ isandjs,  ##<< matrix of i and j!
  r,        ##<< the breakdown
  med.init, ##<< the median init value
  full.init,##<< should pairwise init be used?
  median,   ##<< the logic flag for median or covMcd
- originalFlavor = F  ##<< use the original biwt package estimator?
- ) { 
+ originalFlavor = F,  ##<< use the original biwt package estimator?
+ id   ##<< the job id
+ ) {
+  cat("Parallel job ", id, " at work!")
   corr <- vector("numeric", length(isandjs))
   idx <- 1
-  for (k in isandjs) {
-    i <- k[1]
-    j <- k[2]
+  for (k in 1:nrow(isandjs)) {
+    i <- isandjs[k,1]
+    j <- isandjs[k,2]
     if (full.init!=TRUE) { 
       if (median!=TRUE) {
         med.init<-covMcd(cbind(x[i,],x[j,]))
@@ -82,35 +84,33 @@ partukeycor <- function
   require(multicore)
   g <- nrow(x)           # number of variables
   n <- (g*(g-1))/2       # upper triangle
-  isandjs <- vector("list",cores)       # list of indices into data matrix
   med.init <- fullInitFun(x,full.init, median)
   
   # compute the list of pairs
-  k <- 1
-  for(i in 1:g) {
-    j <- 1
-    while(j < i) {                  
-      isandjs[[k]] <- c(i,j)    
-      j<-j+1
-      k<-k+1 
-    }
-  }
-
+  print("Computing all pairs ... ")
+  x1 <- matrix(seq(from=(g-1), to=1));
+  x2 <- matrix(2:g)
+  p1 <- apply(x1, MARGIN=2, FUN=function(i){rep.int((g-i),i)})
+  p2 <- unlist(apply(x2, 1, function(i) i:g))
+  isandjs <- matrix(c(p1,p2), ncol=2)
+  
   # break vector into list with "cores" number of pieces
+  cat("Breaking up work for ", cores, " number of jobs\n")
   if(cores > 1) {
     b <- cut(1:n, breaks=cores, labels=FALSE)
     ijList <- list()
     for (i in 1:cores) {
-      ijList <- c(ijList, list(isandjs[which(b == i)]))
+      ijList <- c(ijList, list(isandjs[which(b == i),]))
     }
   } else {
     ijList <- list(isandjs)
   }
 
   # send to parallel jobs.
+  print("Starting parallel jobs... ")
   jobs <- lapply(1:cores, function(idx) {
     parallel(parallelBiWt(x,ijList[[idx]],r,med.init, full.init,
-                          median, originalFlavor=og),
+                          median, originalFlavor=og, idx),
              name=idx, mc.set.seed = T)
   })
   corr <- unlist(collect(jobs))
