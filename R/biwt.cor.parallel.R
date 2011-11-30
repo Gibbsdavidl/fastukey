@@ -88,12 +88,12 @@ partukeycor <- function
   
   # compute the list of pairs
   print("Computing all pairs ... ")
-  x1 <- matrix(seq(from=(g-1), to=1));
-  x2 <- matrix(2:g)
-  p1 <- apply(x1, MARGIN=2, FUN=function(i){rep.int((g-i),i)})
-  p2 <- unlist(apply(x2, 1, function(i) i:g))
-  isandjs <- matrix(c(p1,p2), ncol=2)
-  
+  x1 <- matrix(seq(2,g))
+  x2 <- matrix(1:(g-1))
+  p1 <- apply(x1, 2, function(i)rep(i,(i-1)))
+  p2 <- unlist(apply(x2, 1, function(i) 1:i))
+  matrix(c(p1,p2), ncol=2)
+
   # break vector into list with "cores" number of pieces
   cat("Breaking up work for ", cores, " number of jobs\n")
   if(cores > 1) {
