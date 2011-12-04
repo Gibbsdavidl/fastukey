@@ -92,7 +92,7 @@ partukeycor <- function
   x2 <- matrix(1:(g-1))
   p1 <- apply(x1, 2, function(i)rep(i,(i-1)))
   p2 <- unlist(apply(x2, 1, function(i) 1:i))
-  matrix(c(p1,p2), ncol=2)
+  isandjs <- matrix(c(p1,p2), ncol=2)
 
   # break vector into list with "cores" number of pieces
   cat("Breaking up work for ", cores, " number of jobs\n")
