@@ -6,9 +6,9 @@
 partukeycor(x,
 r = 0.2,
 output = "matrix",
-median = FALSE,
+median = TRUE,
 full.init = FALSE,
-absval = TRUE,
+og = FALSE,
 cores = 1)
 }
 \arguments{
@@ -17,11 +17,11 @@ cores = 1)
   \item{output}{The output format}
   \item{median}{use of median (T)? or covMcd (F)?}
   \item{full.init}{init using all data (T)? or pairwise (F)?}
-  \item{absval}{abs value of cors}
+  \item{og}{use the biwt package estimator?}
   \item{cores}{the number of cores to use}
 }
 
-\value{Returns the tukey biweight correlations.}
+\value{Returns the tukey biweight correlation matrix.}
 
 \author{David L Gibbs}
 

@@ -12,8 +12,8 @@ parallelBiWt <- function
  originalFlavor = F,  ##<< use the original biwt package estimator?
  id   ##<< the job id
  ) {
-  cat("Parallel job ", id, " at work!")
-  corr <- vector("numeric", length(isandjs))
+  cat("Parallel job ", id, " at work!\n")
+  corr <- vector("numeric", nrow(isandjs))
   idx <- 1
   for (k in 1:nrow(isandjs)) {
     i <- isandjs[k,1]
@@ -73,11 +73,11 @@ fullInitFun <- function
 partukeycor <- function
 ### fast tukey biweight correlation matrix
 (x,    ##<< The matrix of data 
- r=.2, ##<< The breakdown
+ r=0.2, ##<< The breakdown
  output="matrix",  ##<< The output format
  median=TRUE,      ##<< use of median (T)? or covMcd (F)?
- full.init=TRUE,   ##<< init using all data (T)? or pairwise (F)?
- og=FALSE, ##<< use the biwt package estimator?
+ full.init=FALSE,  ##<< init using all data (T)? or pairwise (F)?
+ og=FALSE,         ##<< use the biwt package estimator?
  cores=1           ##<< the number of cores to use
  ){
   require(biwt)
@@ -88,12 +88,11 @@ partukeycor <- function
   
   # compute the list of pairs
   print("Computing all pairs ... ")
-  x1 <- matrix(seq(2,g))
-  x2 <- matrix(1:(g-1))
-  p1 <- apply(x1, 2, function(i)rep(i,(i-1)))
-  p2 <- unlist(apply(x2, 1, function(i) 1:i))
-  isandjs <- matrix(c(p1,p2), ncol=2)
-
+  m <- matrix(seq(1, (g-1)))
+  res0 <- unlist(apply(m, 1, function(i) rep(i+1, i)))
+  res1 <- unlist(apply(m, 1, function(i) 1:i))
+  isandjs <- matrix(c(res0,res1), ncol=2)
+  
   # break vector into list with "cores" number of pieces
   cat("Breaking up work for ", cores, " number of jobs\n")
   if(cores > 1) {
@@ -115,7 +114,7 @@ partukeycor <- function
   })
   corr <- unlist(collect(jobs))
   if(output == "matrix") {
-    corr.mat <- vect2diss(corr)
+    corr.mat <- vect2diss(corr) # fills lower tri
     diag(corr.mat) <- 1
   }
   corr.mat

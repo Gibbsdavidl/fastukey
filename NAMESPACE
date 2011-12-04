@@ -1,5 +1,5 @@
-useDynLib(fastukeycor)
+useDynLib(fastukey)
 
-export(fastukeycor, biwt.est.2vecs, fastksolve, testfastksolve, partukeycor)
+export(fastukeycor, biwt.est.2vecs, fastksolve, partukeycor)
 
 

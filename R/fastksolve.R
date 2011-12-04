@@ -14,7 +14,7 @@ fastksolve <- function
                     as.double(b0),
                     as.integer(length(d)),
                     output=double(1),
-                    PACKAGE="fastukeycor")
+                    PACKAGE="fastukey")
        )
   if(is.null(result$output)) {result$output<-NA}
   ### Returns the fitness function result.
@@ -22,22 +22,3 @@ fastksolve <- function
 }
 
 
-testfastksolve <- function
-### test fast ksolve with a matrix
-(m ##<< matrix with two columns
- ){
-  med.init=covMcd(x)
-  r <- 0.2
-  p<-2
-  n <- dim(x)[2]
-  c1<-rejpt.bw(p=2,r)[1]
-  b0<-erho.bw(p=2,c1)[1]  
-  d <- sqrt(mahalanobis(x,med.init$center,med.init$cov))
-  k <- fastksolve(d,p,c1,b0)
-  k2 <- ksolve(d,p,c1,b0)
-  print(k)
-  print(k2)
-  print(k-k2)
-  ### prints test
-}
-  

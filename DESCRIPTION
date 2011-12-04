@@ -1,10 +1,11 @@
-Package: fastukeycor
+Package: fastukey
+Imports: biwt, multicore
 Type: Package
-Title: Performs Tukeys biwt correlation... fast! (see biwt).
+Title: Performs Tukeys biwt correlation... fast! (see biwt package).
 Version: 1.0
 Date: 2011-08-26
 Author: David L Gibbs
 Maintainer: David L Gibbs <gibbsd@ohsu.edu>
-Description: Code and ideas modified from biwt package.
-License: GPLv3
+Description: Extension of the biwt package for speed.
+License: GPL-3
 LazyLoad: yes
