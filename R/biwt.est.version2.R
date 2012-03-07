@@ -12,9 +12,11 @@ smallmatmul <- function
 
 `biwt.est.2vecs` <- function
 ### tukey biweight estimation of just two vectors
-(x,   ##<< matrix with two vectors
- r=.2, ##<< the breakdown
- med.init=covMcd(x) ##<< init
+(x,                  ##<< matrix with two vectors
+ r=.2,               ##<< the breakdown
+ med.init=covMcd(x), ##<< init
+ eps = 1.e-5,       ##<< the convergence point
+ crit = 100         ##<< where to start towards convergence
  ) {
   require(biwt)
   p<-2
@@ -27,23 +29,23 @@ smallmatmul <- function
     med.init <- covMcd(x)
     d <- sqrt(mahalanobis(x,med.init$center,med.init$cov))
     k <- fastksolve(d,p,c1,b0)
-  }                                      # MCD is a more robust estimate of the center/shape
+  } # MCD is a more robust estimate of the center/shape
 
-  eps <- 1e-5
-  crit <- 100
   iter <- 1
+  d <- d/k
   while (crit > eps & iter < 100) {
-    d <- d/k
-    biwt.mu <- apply(wtbw(d,c1)*x,2,sum,na.rm=TRUE) / sum (wtbw(d,c1),na.rm=TRUE)
+    wts <- wtbw(d,c1) # weights
+    biwt.mu <- apply(wts*x,2,sum,na.rm=TRUE) / sum (wts,na.rm=TRUE)
     cent <- array(dim=c(n,p,p))
     for (i in 1:n){
       cent[i,,] <- smallmatmul(x[i,]-biwt.mu)
     }
-    biwt.sig <- apply(X=cent*wtbw(d,c1),MARGIN=c(2,3),FUN=sum,na.rm=TRUE)/
+    biwt.sig <- apply(X=cent*wts,MARGIN=c(2,3),FUN=sum,na.rm=TRUE)/
       sum(vbw(d,c1),na.rm=TRUE)  
     d2 <- sqrt(mahalanobis(x,biwt.mu,biwt.sig))
     k <- fastksolve(d2,p,c1,b0)
-    crit <- max(abs(d-(d2/k)),na.rm=TRUE)
+    d2 <- d2/k
+    crit <- max(abs(d-d2),na.rm=TRUE)
     d <- d2
     iter <-  iter+1
   }
